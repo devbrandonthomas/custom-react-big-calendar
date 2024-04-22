@@ -16,6 +16,7 @@ export default class Calendar extends BigCalendar {
 
   propGetter(evt, start, end, isSelected) {
     var style = {};
+    style.backgroundColor = "#828282";
     if(evt.color) {
       style.fontSize="12px";
       style.backgroundColor = evt.color;

@@ -16,11 +16,14 @@ export default class NewEventModal extends Component {
       title         : "",
       date          : moment(),
       end_date      : moment(),
+      location      : "",
       type          : "Single",
       timeIn        : (moment().hour() * 3600),
       timeOut       : (moment().hour() * 3600) + (5 * 60),
       description   : "",
       recurringDays : [],
+      color         : "",
+      category      : "other",
       submitted: true
     };
     this.processNewEvent = this.processNewEvent.bind(this);
@@ -29,13 +32,13 @@ export default class NewEventModal extends Component {
 
   componentWillReceiveProps(newProps) {
     if(newProps.isOpen && !this.props.isOpen && this.state.submitted) {
-      this.setState({title: "", date: moment(), end_date: moment(), type: "Single", timeIn: (moment().hour() * 3600), timeOut: (moment().hour() * 3600) + (5 * 60), description: "", recurringDays: [], submitted: false});
+      this.setState({title: "", date: moment(), end_date: moment(), type: "Single", timeIn: (moment().hour() * 3600), timeOut: (moment().hour() * 3600) + (5 * 60), description: "", location: "", recurringDays: [], color: "#3B3B3B", submitted: false});
     }
   }
 
   processNewEvent() {
-    if(this.state.title !== "" && this.state.description !== "" && !(this.state.recurringDays.length === 0 && (this.state.type === "Week" || this.state.type === "BI"))) {
-      var evt = {id: -1, title: this.state.title, start: this.state.date.toDate(), end: this.state.end_date.toDate(), startTime: this.state.timeIn, endTime: this.state.timeOut, recurringDays: this.state.recurringDays, desc: this.state.description, type: this.state.type};
+    if(this.state.title !== "" && this.state.description !== "" && this.state.location !== "" && !(this.state.recurringDays.length === 0 && (this.state.type === "Week" || this.state.type === "BI"))) {
+      var evt = {id: -1, title: this.state.title, start: this.state.date.toDate(), end: this.state.end_date.toDate(), startTime: this.state.timeIn, endTime: this.state.timeOut, recurringDays: this.state.recurringDays, color: this.state.color, category: this.state.category, desc: this.state.description, location: this.state.location, type: this.state.type};
       this.setState({submitted: true});
       this.props.addEvent(evt);
     }
@@ -43,6 +46,9 @@ export default class NewEventModal extends Component {
       
     }
     if(this.state.description === "") {
+
+    }
+    if(this.state.location === ""){
 
     }
     if(this.state.recurringDays.length === 0 && (this.state.type === "Week" || this.state.type === "BI")) {
@@ -69,6 +75,7 @@ export default class NewEventModal extends Component {
     }
   }
 
+
   handleType = (e) => {
     if(this.state.type === "Single" && e.target.value !== "Single") {
       return this.setState({type: e.target.value, end_date: moment()});
@@ -78,8 +85,16 @@ export default class NewEventModal extends Component {
     this.setState({type: e.target.value, date: moment(), end_date: moment()});
   }
 
+  handleCategory = (e) => {
+    this.setState({category: e.target.value});
+  }
+
   handleDaySelectChange = (e) => {
     this.setState({recurringDays: e});
+  }
+
+  handleColorChange = (e) => {
+    this.setState({ color: e.target.value });
   }
 
   render() {
@@ -103,6 +118,22 @@ export default class NewEventModal extends Component {
           </FormGroup>
 
           <FormGroup>
+            <Label>Category:</Label>
+            <FormControl componentClass="select" value={this.state.category} onChange={this.handleCategory}>
+              <option value="school">school</option>
+              <option value="personal">personal</option>
+              <option value="other">other</option>
+            </FormControl>
+          </FormGroup>
+
+          { this.state.category === "other" &&
+          <FormGroup>
+              <Label>Color:</Label>
+              <FormControl type="color" placeholder="Your event color here..." onChange={(evt)=>{this.setState({color: evt.target.value})}} />
+            </FormGroup>
+          }
+
+          <FormGroup>
             <Label>Description:</Label>
             <FormControl placeholder="Your event description here..." onChange={(evt)=>{this.setState({description: evt.target.value})}}/>
           </FormGroup>
@@ -121,6 +152,10 @@ export default class NewEventModal extends Component {
             </FormGroup>
           }
 
+          <FormGroup>
+            <Label> Location:</Label>
+            <FormControl placeholder="Location" onChange={(evt)=>{this.setState({location: evt.target.value})}}></FormControl>
+          </FormGroup>
           <FormGroup>
             <Label>Starting Time: </Label>
 						<TimePicker value={this.state.timeIn} onChange={this.timeIn} step={5} start={'07:00 AM'} />
@@ -148,12 +183,14 @@ export default class NewEventModal extends Component {
 NewEventModal.defaultProps = {
   isOpen: false,
   toggleModal : null,
-  addEvent: null
+  addEvent: null,
+  defaultColor: "#3B3B3B"
 };
 
 NewEventModal.propTypes = {
   isOpen: PropTypes.bool,
   toggleModal: PropTypes.func,
-  addEvent: PropTypes.func
+  addEvent: PropTypes.func,
+  defaultColor: PropTypes.string
 };
 

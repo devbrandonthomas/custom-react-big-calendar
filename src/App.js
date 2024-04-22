@@ -18,7 +18,7 @@ export default class Calendar extends Component {
       newModalOpen  : false,
       selectedEvent : null,
       events        : [ 
-           {id: 0, title: "long test event nameeeeeeee", start: moment().set("minutes", 0).toDate(), end: moment().set("minutes", 5).toDate(), startTime: moment().hours() * 3600, endTime: moment().hours() * 3600 + 5 * 60, recurringDays: [0, 1], desc: "Description", color: "#FF0000"},
+           {id: 0, title: "long test event nameeeeeeee", start: moment().set("minutes", 0).toDate(), end: moment().set("minutes", 5).toDate(), startTime: moment().hours() * 3600, endTime: moment().hours() * 3600 + 5 * 60, recurringDays: [0, 1], desc: "Description", color: "#FF00FF", col: "#FF00FF", category: "other"},
            {id: 1, title: "long test event nameeeeeeee", start: moment().add(1, "hours").set("minutes", 0).toDate(), end: moment().add(1, "hours").set("minutes", 5).toDate(), startTime: moment().add(1, "hours").hours() * 3600, endTime: moment().add(1, "hours").hours() * 3600 + 5 * 60, recurringDays: [2, 4], desc: "Description"}
       ]
     };
@@ -69,6 +69,14 @@ export default class Calendar extends Component {
       recurringDayValues.push(obj["value"]);
     }
     evt["recurringDays"] = recurringDayValues;
+    if (evt["category"] === "school") {
+      evt["color"] = "green";
+    }
+    else if (evt["category"] === "personal") {
+      evt["color"] = "blue";
+    }
+    evt["color"] = evt.color; // Add the 'color' property to the event object
+    evt["col"] = evt.color;
     if(evt["type"] === "BI") {
       let startDate = moment(evt["start"]);
       let startDateDay = startDate.day();
